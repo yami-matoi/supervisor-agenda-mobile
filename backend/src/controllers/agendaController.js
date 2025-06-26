@@ -37,12 +37,12 @@ exports.Insert = (req, res, next) => {
 
 exports.SearchAll = async (req, res, next) => {
   try {
-    const { id_espec } = req.query;
+    const { id_espec, id_profissio } = req.query;
+
     const agenda = await Agenda.findAll({
       where: {
-        SITUAGEN: {
-          [Op.ne]: 3,
-        },
+        SITUAGEN: { [Op.ne]: 3 },
+        ...(id_profissio && { ID_PROFISSIO: Number(id_profissio) }),
       },
       include: [
         {
@@ -62,30 +62,30 @@ exports.SearchAll = async (req, res, next) => {
           ],
         },
         {
-  model: Procedimento,
-  as: "procedimento",
-  required: true,
-  include: [
-    {
-      model: Especialidade,
-      as: "especialidades",
-      through: { attributes: [] },
-      attributes: ["IDESPEC", "DESCESPEC"],
-      where: id_espec ? { IDESPEC: id_espec } : undefined,
-      required: !!id_espec, // força INNER JOIN se houver filtro
-    },
-  ],
-}
-
-
+          model: Procedimento,
+          as: "procedimento",
+          required: !!id_espec, // força INNER JOIN se especialidade for usada
+          include: [
+            {
+              model: Especialidade,
+              as: "especialidades",
+              through: { attributes: [] },
+              attributes: ["IDESPEC", "DESCESPEC"],
+              where: id_espec ? { IDESPEC: Number(id_espec) } : undefined,
+              required: !!id_espec,
+            },
+          ],
+        },
       ],
     });
 
-    res.status(status.OK).send(agenda);
+    res.status(200).send(agenda);
   } catch (error) {
-    next(error);
+    console.error("Erro ao buscar agenda:", error);
+    res.status(500).json({ message: "Erro ao buscar agenda" });
   }
 };
+
 
 
 exports.SearchAllCanceleds = async (req, res, next) => {

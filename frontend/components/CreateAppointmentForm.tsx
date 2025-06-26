@@ -334,8 +334,9 @@ export default function CreateAppointmentForm({ onHandleSubmit }: Props) {
           </TouchableOpacity>
         </ScrollView>
       </Modal>
-    </View>
+    </View>//
   );
+  
 }
 
 const styles = StyleSheet.create({

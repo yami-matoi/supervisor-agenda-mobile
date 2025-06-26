@@ -24,6 +24,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Toast from "react-native-toast-message";
 import { storage } from "@/src/utils/storage"; // certifique-se que o caminho está correto
+import { Picker } from "@react-native-picker/picker";
 
 
 export default function ScheduleScreen() {
@@ -35,6 +36,9 @@ export default function ScheduleScreen() {
   const [especialidades, setEspecialidades] = useState<Especialidade[]>([]);
   const [procedimentos, setProcedimentos] = useState<ProcedimentoDTO[]>([]);
   const [profissionais, setProfissionais] = useState<ProfissionalDTO[]>([]);
+  const [idEspecialidadeUsuario, setIdEspecialidadeUsuario] = useState<number | null>(null);
+  const [filtroProfissionalId, setFiltroProfissionalId] = useState<number | null>(null);
+
   const { width } = useWindowDimensions();
   const isNarrow = width < 600;
 
@@ -45,8 +49,9 @@ useEffect(() => {
     try {
       const usuario = await storage.obterUsuario();
       const id_espec = usuario?.especialidade?.id;
+      setIdEspecialidadeUsuario(id_espec); // salva a especialidade como state
 
-      await carregarEventos(id_espec);
+      await carregarEventos(id_espec, filtroProfissionalId);
 
       const [especialidadesRes, procedimentosRes, profissionaisRes] = await Promise.all([
         api.get("/especialidades"),
@@ -63,19 +68,22 @@ useEffect(() => {
   };
 
   carregarDados();
-}, [eventos]);
+}, [idEspecialidadeUsuario, filtroProfissionalId]); // ✅ depende apenas dos filtros
 
 
-const carregarEventos = async (id_espec?: number) => {
+const carregarEventos = async (id_espec?: number, id_profissio?: number | null) => {
   try {
-    const response = await api.get("/agenda", {
-      params: id_espec ? { id_espec } : {},
-    });
+    const params: any = {};
+    if (id_espec) params.id_espec = id_espec;
+    if (id_profissio) params.id_profissio = id_profissio;
+
+    const response = await api.get("/agenda", { params });
     setEventos(response.data);
   } catch (error) {
     console.error("Erro ao carregar agenda:", error);
   }
 };
+
 
   const eventosWithColor = eventos.map((ev) => ({
     ...ev,
@@ -188,6 +196,29 @@ const carregarEventos = async (id_espec?: number) => {
           style={isNarrow ? styles.listContainer : styles.sideListContainer}
         >
           <CreateAppointmentForm onHandleSubmit={carregarEventos} />
+
+<View style={{ marginHorizontal: 16, marginTop: 8 }}>
+  <Text style={{ fontWeight: "600" }}>Filtrar por profissional</Text>
+  <View style={{ borderWidth: 1, borderRadius: 6, borderColor: "#ccc", backgroundColor: "#fff" }}>
+    <Picker
+      selectedValue={filtroProfissionalId ?? 0}
+      onValueChange={(value) => {
+        setFiltroProfissionalId(value === 0 ? null : value);
+      }}
+    >
+      <Picker.Item label="Todos os profissionais" value={0} />
+      {profissionais.map((p) => (
+        <Picker.Item
+          key={p.IDPROFISSIO}
+          label={p.pessoa?.NOMEPESSOA}
+          value={p.IDPROFISSIO}
+        />
+      ))}
+    </Picker>
+  </View>
+</View>
+
+
           {selectedDate ? (
             <>
               <DateHeader dateString={selectedDate} />
