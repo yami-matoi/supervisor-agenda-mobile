@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const status = require("http-status");
-const { Usuario, Profissional, PessoaFisica } = require("../models");
+const { Usuario, Profissional, PessoaFisica, ProfissionalEspecialidade, Especialidade } = require("../models");
 
 exports.login = async (req, res) => {
   const { login, senha } = req.body;
@@ -14,16 +14,24 @@ exports.login = async (req, res) => {
   try {
     const usuario = await Usuario.findOne({
       where: { LOGUSUARIO: login },
+      attributes: ["ID_PROFISSIO", "LOGUSUARIO", "SENHAUSUA"],
       include: [
         {
           model: Profissional,
           as: "usuarioProfissional",
-          where: { TIPOPROFI: 4 }, // garante que só profissional do tipo 4 acesse
+          where: { TIPOPROFI: 3 },
+          attributes: ["IDPROFISSIO", "ID_PESSOAFIS", "TIPOPROFI"],
           include: [
             {
               model: PessoaFisica,
               as: "pessoa",
               attributes: ["NOMEPESSOA", "CPFPESSOA"],
+            },
+            {
+              model: Especialidade,
+              as: "especialidadesProfissional",
+              attributes: ["IDESPEC", "CODESPEC", "DESCESPEC"],
+              through: { attributes: [] },
             },
           ],
         },
@@ -44,14 +52,26 @@ exports.login = async (req, res) => {
         .json({ message: "Senha incorreta." });
     }
 
+    const profissional = usuario.usuarioProfissional;
+    const pessoa = profissional.pessoa;
+
+    const especialidadeObj = profissional.especialidadesProfissional?.[0];
+
     return res.status(status.OK).json({
       message: "Login bem-sucedido",
       usuario: {
         login: usuario.LOGUSUARIO,
         id_profissio: usuario.ID_PROFISSIO,
-        cpf_profissio: usuario.usuarioProfissional.pessoa.CPFPESSOA,
-        nome_profissio: usuario.usuarioProfissional.pessoa.NOMEPESSOA,
-        tipo: usuario.usuarioProfissional.TIPOPROFI,
+        cpf_profissio: pessoa.CPFPESSOA,
+        nome_profissio: pessoa.NOMEPESSOA,
+        tipo: profissional.TIPOPROFI,
+        especialidade: especialidadeObj
+          ? {
+              id: especialidadeObj.IDESPEC,
+              codigo: especialidadeObj.CODESPEC,
+              descricao: especialidadeObj.DESCESPEC,
+            }
+          : null,
       },
     });
   } catch (error) {

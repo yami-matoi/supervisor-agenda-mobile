@@ -67,7 +67,7 @@ agenda-mobile/
 5. Ou inicie com `systemd` em produção:
 
    ```bash
-   sudo systemctl start backend_leonardolima.service
+   sudo systemctl start backend_gabrielpereira.service
    ```
 
 ---
@@ -148,12 +148,12 @@ eas build --platform android
 
 - `runtimeVersion` deve ser uma string fixa, como `"1.1.1"`
 - O backend deve escutar em `0.0.0.0` e estar acessível por IP fixo
-- O serviço do backend pode ser persistido com `systemd` (ex: `backend_leonardolima.service`)
+- O serviço do backend pode ser persistido com `systemd` (ex: `backend_gabrielpereira.service`)
 
 ---
 
 ## 👨‍💻 Autor
 
-[**Leonardo Lima Andrade**](https://github.com/LeonardoLAndrade)  
+[**Gabriel Pereira Silva**](https://github.com/yami-matoi)  
 Projeto desenvolvido para fins acadêmicos  
 Faculdade FASIPE Cuiabá - FASICLIN

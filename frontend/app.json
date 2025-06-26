@@ -2,7 +2,7 @@
   "expo": {
     "name": "Agenda",
     "slug": "agenda",
-    "version": "1.2.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/ic_launcher/1024.png",
     "scheme": "agenda",
@@ -18,13 +18,13 @@
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD"
     },
-    "runtimeVersion": "1.2.0",
+    "runtimeVersion": "1.0.0",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "edgeToEdgeEnabled": true,
-      "package": "com.leonardo.agenda"
+      "package": "com.yami-matoi.agenda"
     },
     "web": {
       "bundler": "metro",

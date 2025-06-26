@@ -42,7 +42,13 @@ export default function LoginScreen() {
         const data = response?.data;
 
         if (data?.message === "Login bem-sucedido") {
-          await storage.salvarUsuario(data.usuario);
+
+            console.log("📦 Dados recebidos no login:", data.usuario);
+  console.log("📘 Especialidade recebida:", data.usuario?.especialidade);
+          await storage.salvarUsuario({
+  ...data.usuario,
+  especialidade: data.usuario.especialidade || null,
+});
 
           Toast.show({
             type: "success",
