@@ -23,6 +23,8 @@ import CreateAppointmentForm from "@/components/CreateAppointmentForm";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Toast from "react-native-toast-message";
+import { storage } from "@/src/utils/storage"; // certifique-se que o caminho está correto
+
 
 export default function ScheduleScreen() {
   const MAX_DOTS = 3;
@@ -36,30 +38,44 @@ export default function ScheduleScreen() {
   const { width } = useWindowDimensions();
   const isNarrow = width < 600;
 
-  useEffect(() => {
-    carregarEventos();
-    api
-      .get("/especialidades")
-      .then((res) => setEspecialidades(res.data))
-      .catch(console.error);
-    api
-      .get("/procedimentos")
-      .then((res) => setProcedimentos(res.data))
-      .catch(console.error);
-    api
-      .get("/profissionais")
-      .then((res) => setProfissionais(res.data))
-      .catch(console.error);
-  }, [eventos]);
 
-  const carregarEventos = async () => {
+
+useEffect(() => {
+  const carregarDados = async () => {
     try {
-      const response = await api.get("/agenda");
-      setEventos(response.data);
-    } catch (err) {
-      console.error("Erro ao carregar eventos:", err);
+      const usuario = await storage.obterUsuario();
+      const id_espec = usuario?.especialidade?.id;
+
+      await carregarEventos(id_espec);
+
+      const [especialidadesRes, procedimentosRes, profissionaisRes] = await Promise.all([
+        api.get("/especialidades"),
+        api.get("/procedimentos"),
+        api.get("/profissionais"),
+      ]);
+
+      setEspecialidades(especialidadesRes.data);
+      setProcedimentos(procedimentosRes.data);
+      setProfissionais(profissionaisRes.data);
+    } catch (error) {
+      console.error("Erro ao carregar dados:", error);
     }
   };
+
+  carregarDados();
+}, [eventos]);
+
+
+const carregarEventos = async (id_espec?: number) => {
+  try {
+    const response = await api.get("/agenda", {
+      params: id_espec ? { id_espec } : {},
+    });
+    setEventos(response.data);
+  } catch (error) {
+    console.error("Erro ao carregar agenda:", error);
+  }
+};
 
   const eventosWithColor = eventos.map((ev) => ({
     ...ev,

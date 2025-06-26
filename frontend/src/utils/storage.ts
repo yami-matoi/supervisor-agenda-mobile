@@ -16,7 +16,7 @@ export const storage = {
     try {
       const json = await AsyncStorage.getItem(STORAGE_KEY);
       const usuario = json ? JSON.parse(json) : null;
-      console.log("🔍 Usuario carregado:", usuario);
+      //console.log("🔍 Usuario carregado:", usuario);
       return usuario;
     } catch (error) {
       console.error("❌ Erro ao carregar usuario:", error);

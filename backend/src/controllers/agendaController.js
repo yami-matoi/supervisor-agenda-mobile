@@ -32,9 +32,13 @@ exports.Insert = (req, res, next) => {
 };
 
 // Buscar todos os agendamentos com joins
+
+
+
 exports.SearchAll = async (req, res, next) => {
   try {
-    const agendas = await Agenda.findAll({
+    const { id_espec } = req.query;
+    const agenda = await Agenda.findAll({
       where: {
         SITUAGEN: {
           [Op.ne]: 3,
@@ -58,29 +62,35 @@ exports.SearchAll = async (req, res, next) => {
           ],
         },
         {
-          model: Procedimento,
-          as: "procedimento",
-          include: [
-            {
-              model: Especialidade,
-              as: "especialidades",
-              through: { attributes: [] },
-              attributes: ["IDESPEC", "DESCESPEC"],
-            },
-          ],
-        },
+  model: Procedimento,
+  as: "procedimento",
+  required: true,
+  include: [
+    {
+      model: Especialidade,
+      as: "especialidades",
+      through: { attributes: [] },
+      attributes: ["IDESPEC", "DESCESPEC"],
+      where: id_espec ? { IDESPEC: id_espec } : undefined,
+      required: !!id_espec, // força INNER JOIN se houver filtro
+    },
+  ],
+}
+
+
       ],
     });
 
-    res.status(status.OK).send(agendas);
+    res.status(status.OK).send(agenda);
   } catch (error) {
     next(error);
   }
 };
 
+
 exports.SearchAllCanceleds = async (req, res, next) => {
   try {
-    const agendas = await Agenda.findAll({
+    const agenda = await Agenda.findAll({
       where: {
         SITUAGEN: 3,
       },
@@ -116,7 +126,7 @@ exports.SearchAllCanceleds = async (req, res, next) => {
       ],
     });
 
-    res.status(status.OK).send(agendas);
+    res.status(status.OK).send(agenda);
   } catch (error) {
     next(error);
   }
