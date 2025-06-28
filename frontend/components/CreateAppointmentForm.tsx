@@ -23,6 +23,7 @@ import {
 } from "./EditAppointmentModal";
 import Toast from "react-native-toast-message";
 import { storage } from "@/src/utils/storage";
+import { toastConfig } from "@/src/utils/toastConfig";
 
 type Props = {
   onHandleSubmit: () => void;
@@ -372,6 +373,7 @@ const handleSubmit = () => {
           >
             <Text style={styles.buttonText}>CANCELAR</Text>
           </TouchableOpacity>
+          <Toast config={toastConfig} />
         </ScrollView>
       </Modal>
     </View>//
