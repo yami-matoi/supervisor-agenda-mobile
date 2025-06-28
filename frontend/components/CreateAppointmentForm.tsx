@@ -153,7 +153,7 @@ const [usuario, setUsuario] = useState<any>(null);
 
   const handleCancel = () => {
     setShowForm(false);
-    setSelectedEspecialidade(null);
+    
     setSelectedProcedimento(null);
     setSelectedPaciente(null);
     setSelectedProfissional(null);
@@ -161,7 +161,7 @@ const [usuario, setUsuario] = useState<any>(null);
     setDescricao("");
   };
 
-  const handleSubmit = () => {
+const handleSubmit = () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0); // zera hora para comparar apenas data
 
@@ -173,49 +173,67 @@ const [usuario, setUsuario] = useState<any>(null);
     });
     return;
   }
-    if (
-      !selectedEspecialidade ||
-      !selectedProcedimento ||
-      !selectedPaciente ||
-      !selectedProfissional
-    ) {
+
+  if (
+    !selectedEspecialidade ||
+    !selectedProcedimento ||
+    !selectedPaciente ||
+    !selectedProfissional
+  ) {
+    Toast.show({
+      type: "info",
+      text1: "Alerta!",
+      text2: "Preencha todos os campos obrigatórios.",
+    });
+    return;
+  }
+
+  const payload = {
+    ID_PROCED: selectedProcedimento,
+    ID_PESSOAFIS: selectedPaciente,
+    ID_PROFISSIO: selectedProfissional,
+    DATAABERT: toMysqlString(startDate),
+    DESCRCOMP: descricao,
+    SOLICMASTER: 0,
+  };
+
+  api
+    .post("/agenda", payload)
+    .then(() => {
       Toast.show({
-        type: "info",
-        text1: "Alerta!",
-        text2: "Preencha todos os campos obrigatórios.",
-      });
-      return;
-    }
-
-    const payload = {
-      ID_PROCED: selectedProcedimento,
-      ID_PESSOAFIS: selectedPaciente,
-      ID_PROFISSIO: selectedProfissional,
-      DATAABERT: toMysqlString(startDate),
-      DESCRCOMP: descricao,
-      SOLICMASTER: 0,
-    };
-
-    api
-      .post("/agenda", payload)
-      .then(() => {
-        Toast.show({
-          type: "success",
-          text1: "Agendamento criado com sucesso!",
-        });
-        setShowForm(false);
-        onHandleSubmit();
-      })
-      .catch((err) => {
-        console.error(err);
-        Toast.show({
-          type: "error",
-          text1: "Erro",
-          text2: "Não foi possível criar o agendamento.",
-        });
+        type: "success",
+        text1: "Agendamento criado com sucesso!",
       });
 
-    setSelectedEspecialidade(null);
+      setShowForm(false);
+      onHandleSubmit();
+
+      // Limpa apenas campos necessários
+      setSelectedProcedimento(null);
+      setSelectedPaciente(null);
+      setSelectedProfissional(null);
+      setStartDate(new Date());
+      setDescricao("");
+
+      // ✅ Recarrega dados filtrados pela especialidade do usuário
+      if (usuario && usuario.especialidade) {
+        const especId = usuario.especialidade.id;
+
+      }
+
+    })
+    .catch((err) => {
+      console.error(err);
+      Toast.show({
+        type: "error",
+        text1: "Erro",
+        text2: "Não foi possível criar o agendamento.",
+      });
+    });
+
+
+
+    
     setSelectedProcedimento(null);
     setSelectedPaciente(null);
     setSelectedProfissional(null);

@@ -36,12 +36,13 @@ export default function ScheduleScreen() {
   const [especialidades, setEspecialidades] = useState<Especialidade[]>([]);
   const [procedimentos, setProcedimentos] = useState<ProcedimentoDTO[]>([]);
   const [profissionais, setProfissionais] = useState<ProfissionalDTO[]>([]);
-  const [idEspecialidadeUsuario, setIdEspecialidadeUsuario] = useState<number | null>(null);
+  const [idEspecialidadeUsuario, setIdEspecialidadeUsuario] = useState<number | undefined>(undefined);
   const [filtroProfissionalId, setFiltroProfissionalId] = useState<number | null>(null);
 
   const { width } = useWindowDimensions();
   const isNarrow = width < 600;
 
+  const [reloadCounter, setReloadCounter] = useState(0);
 
 
 useEffect(() => {
@@ -68,7 +69,7 @@ useEffect(() => {
   };
 
   carregarDados();
-}, [idEspecialidadeUsuario, filtroProfissionalId]); // ✅ depende apenas dos filtros
+}, [idEspecialidadeUsuario, filtroProfissionalId, reloadCounter]); // ✅ depende apenas dos filtros
 
 
 const carregarEventos = async (id_espec?: number, id_profissio?: number | null) => {
@@ -129,6 +130,7 @@ const carregarEventos = async (id_espec?: number, id_profissio?: number | null) 
         setEventos((prev) =>
           prev.map((e) => (e.IDAGENDA === updated.IDAGENDA ? updated : e))
         );
+        setReloadCounter(c => c + 1); // ✅ força reload geral
         handleClose();
         Toast.show({
           type: "success",
@@ -154,6 +156,7 @@ const carregarEventos = async (id_espec?: number, id_profissio?: number | null) 
       })
       .then(() => {
         setEventos((prev) => prev.filter((e) => e.IDAGENDA !== id));
+        setReloadCounter(c => c + 1); // ✅ força reload geral
         handleClose();
         Toast.show({
           type: "success",
@@ -195,7 +198,8 @@ const carregarEventos = async (id_espec?: number, id_profissio?: number | null) 
         <View
           style={isNarrow ? styles.listContainer : styles.sideListContainer}
         >
-          <CreateAppointmentForm onHandleSubmit={carregarEventos} />
+        <CreateAppointmentForm onHandleSubmit={() => carregarEventos(idEspecialidadeUsuario, filtroProfissionalId)} />
+
 
 <View style={{ marginHorizontal: 16, marginTop: 8 }}>
   <Text style={{ fontWeight: "600" }}>Filtrar por profissional</Text>

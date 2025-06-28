@@ -18,6 +18,7 @@ import api from "../../src/services/api"; // supondo que seu Axios está configu
 import { EditedEvent } from "@/components/EditAppointmentModal";
 import { TextInput } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Solicitacoes() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -26,10 +27,13 @@ export default function Solicitacoes() {
   const [cancelReason, setCancelReason] = useState("");
   const [showCancelInput, setShowCancelInput] = useState(false);
 
-  useEffect(() => {
+useFocusEffect(
+  React.useCallback(() => {
     carregarSolicitacoes();
-  }, [solicitacoes]);
+  }, [])
+);
 
+ 
   const carregarSolicitacoes = async () => {
     try {
       const [agendaResponse, canceladosResponse] = await Promise.all([
@@ -44,7 +48,7 @@ export default function Solicitacoes() {
 
       const filtrados = dadosCombinados.filter(
         (item: any) =>
-          item.SOLICMASTER === 1 &&
+          item.SOLICMASTER === 0 &&
           (item.DATANOVA !== null || item.SITUAGEN === "3")
       );
       setSolicitacoes(filtrados);
