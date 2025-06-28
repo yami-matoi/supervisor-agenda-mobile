@@ -44,7 +44,7 @@ export default function Solicitacoes() {
 
       const filtrados = dadosCombinados.filter(
         (item: any) =>
-          item.SOLICMASTER === 0 &&
+          item.SOLICMASTER === 1 &&
           (item.DATANOVA !== null || item.SITUAGEN === "3")
       );
       setSolicitacoes(filtrados);

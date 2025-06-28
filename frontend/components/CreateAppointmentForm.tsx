@@ -55,37 +55,34 @@ export default function CreateAppointmentForm({ onHandleSubmit }: Props) {
 
 const [usuario, setUsuario] = useState<any>(null);
 
-  useEffect(() => {
-    const carregarUsuario = async () => {
-      const usuarioSalvo = await storage.obterUsuario();
-      console.log(usuarioSalvo);
-      setUsuario(usuarioSalvo);
-    };
-    carregarUsuario();
-  }, []);
 
+    useEffect(() => {
+      const carregarUsuario = async () => {
+        const usuarioSalvo = await storage.obterUsuario();
+        console.log(usuarioSalvo);
+        setUsuario(usuarioSalvo);
 
-  useEffect(() => {
-    api.get("/especialidades").then((res) => setEspecialidades(res.data));
-  }, []);
+        if (usuarioSalvo && usuarioSalvo.especialidade) {
+          const especId = usuarioSalvo.especialidade.id;
 
-  const onSelectEspecialidade = (cod: number | null) => {
-    setSelectedEspecialidade(cod);
-    setSelectedProcedimento(null);
-    setSelectedProfissional(null);
+          setSelectedEspecialidade(especId);
 
-    api.get(`/especialidade/${cod}/procedimentos`).then((res) => {
-      setProcedimentos(res.data);
-    });
+          api.get(`/especialidade/${especId}/procedimentos`).then((res) => {
+            setProcedimentos(res.data);
+          });
 
-    api.get(`/pessoafis`).then((res) => {
-      setPacientes(res.data);
-    });
+          api.get(`/pessoafis`).then((res) => {
+            setPacientes(res.data);
+          });
 
-    api.get(`/especialidade/${cod}/profissionais`).then((res) => {
-      setProfissionais(res.data);
-    });
-  };
+          api.get(`/especialidade/${especId}/profissionais`).then((res) => {
+            setProfissionais(res.data);
+          });
+        }
+      };
+      carregarUsuario();
+    }, []);
+
 
   const onSelectProcedimento = (id: number) => {
     const proc = procedimentos.find((p) => p.IDPROCED === id);
@@ -248,7 +245,7 @@ const [usuario, setUsuario] = useState<any>(null);
           <View style={styles.pickerWrapper}>
             <Picker
               selectedValue={selectedEspecialidade}
-              onValueChange={(itemValue) => onSelectEspecialidade(itemValue)}
+              onValueChange={(itemValue) => setSelectedEspecialidade(itemValue as number)}
               enabled={false} // desativa alteração
             >
               {usuario && usuario.especialidade ? (
