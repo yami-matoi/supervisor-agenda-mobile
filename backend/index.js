@@ -24,7 +24,7 @@ const syncDatabase = async () => {
     await models.sequelize.sync({ force: false });
     console.log("Todas as tabelas foram sincronizadas com sucesso.");
 
-    const port = 5130;
+    const port = 5207;
     app.set("port", port);
     const server = http.createServer(app);
     server.listen(port, "0.0.0.0", () => {

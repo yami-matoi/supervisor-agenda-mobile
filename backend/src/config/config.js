@@ -3,8 +3,8 @@ module.exports = {
     database: {
       host: "srvdb-dev",
       port: "3306",
-      user: "aluno14",
-      password: "/ud8ZNsXXvY=",
+      user: "aluno21",
+      password: "B+SFf2V0+Po=",
       database: "fasiclin",
       dialect: "mysql",
     },
@@ -13,8 +13,8 @@ module.exports = {
     database: {
       host: "srvdb-dev",
       port: "3306",
-      user: "aluno14",
-      password: "/ud8ZNsXXvY=",
+      user: "aluno21",
+      password: "B+SFf2V0+Po=",
       database: "fasiclin",
       dialect: "mysql",
     },
