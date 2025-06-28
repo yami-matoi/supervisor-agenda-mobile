@@ -29,6 +29,8 @@ export default function Solicitacoes() {
   const [cancelReason, setCancelReason] = useState("");
   const [showCancelInput, setShowCancelInput] = useState(false);
   const [idEspecialidadeUsuario, setIdEspecialidadeUsuario] = useState<number | null>(null);
+  const [ordemRecentePrimeiro, setOrdemRecentePrimeiro] = useState(true);
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -45,7 +47,7 @@ export default function Solicitacoes() {
       };
 
       fetchData();
-    }, [])
+    }, [ordemRecentePrimeiro])
   );
  
  const carregarSolicitacoes = async (id_espec: number | null) => {
@@ -66,6 +68,13 @@ export default function Solicitacoes() {
           (item.DATANOVA !== null || item.SITUAGEN === "3") &&
           (id_espec === null || item.procedimento?.especialidades?.[0]?.IDESPEC === id_espec)
       );
+
+      filtrados.sort((a, b) => {
+        const dateA = new Date(a.DATAABERT).getTime();
+        const dateB = new Date(b.DATAABERT).getTime();
+        return ordemRecentePrimeiro ? dateB - dateA : dateA - dateB;
+      });
+
 
       setSolicitacoes(filtrados);
     } catch (err) {
@@ -203,6 +212,25 @@ export default function Solicitacoes() {
       <View style={styles.flex}>
         <Header />
         <Text style={styles.title}>SOLICITAÇÕES</Text>
+
+                <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#029046",
+              padding: 12,
+              borderRadius: 6,
+              alignItems: "center",
+            }}
+            onPress={() => setOrdemRecentePrimeiro((prev) => !prev)}
+          >
+            <Text style={{ color: "#fff", fontWeight: "600" }}>
+              {ordemRecentePrimeiro
+                ? "Mostrar mais antigos primeiro"
+                : "Mostrar mais recentes primeiro"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
 
         <FlatList
           data={solicitacoes}
