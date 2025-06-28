@@ -157,3 +157,4 @@ eas build --platform android
 [**Gabriel Pereira Silva**](https://github.com/yami-matoi)  
 Projeto desenvolvido para fins acadêmicos  
 Faculdade FASIPE Cuiabá - FASICLIN
+#eumeformeiporcausadoleo
