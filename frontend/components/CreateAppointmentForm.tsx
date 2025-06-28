@@ -22,6 +22,7 @@ import {
   ProfiEspec,
 } from "./EditAppointmentModal";
 import Toast from "react-native-toast-message";
+import { storage } from "@/src/utils/storage";
 
 type Props = {
   onHandleSubmit: () => void;
@@ -50,6 +51,19 @@ export default function CreateAppointmentForm({ onHandleSubmit }: Props) {
 
   const [titulo, setTitulo] = useState("Título gerado automaticamente");
   const [showForm, setShowForm] = useState(false);
+
+
+const [usuario, setUsuario] = useState<any>(null);
+
+  useEffect(() => {
+    const carregarUsuario = async () => {
+      const usuarioSalvo = await storage.obterUsuario();
+      console.log(usuarioSalvo);
+      setUsuario(usuarioSalvo);
+    };
+    carregarUsuario();
+  }, []);
+
 
   useEffect(() => {
     api.get("/especialidades").then((res) => setEspecialidades(res.data));
@@ -235,19 +249,19 @@ export default function CreateAppointmentForm({ onHandleSubmit }: Props) {
             <Picker
               selectedValue={selectedEspecialidade}
               onValueChange={(itemValue) => onSelectEspecialidade(itemValue)}
+              enabled={false} // desativa alteração
             >
-              <Picker.Item label="Selecione" value={null} />
-              {especialidades
-                .sort((a, b) => a.DESCESPEC.localeCompare(b.DESCESPEC))
-                .map((e) => (
-                  <Picker.Item
-                    key={e.IDESPEC}
-                    label={e.DESCESPEC}
-                    value={e.IDESPEC}
-                  />
-                ))}
+              {usuario && usuario.especialidade ? (
+                <Picker.Item
+                  label={usuario.especialidade.descricao}
+                  value={usuario.especialidade.id}
+                />
+              ) : (
+                <Picker.Item label="Carregando..." value={null} />
+              )}
             </Picker>
           </View>
+
 
           <Text style={styles.label}>Procedimento</Text>
           <View style={styles.pickerWrapper}>

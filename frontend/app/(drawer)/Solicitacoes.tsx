@@ -345,22 +345,7 @@ export default function Solicitacoes() {
                 {/* Botões de ação */}
                 {selected.DATANOVA ? (
                   <View style={styles.modalActions}>
-                    {!showCancelInput ? (
-                      <>
-                        <Pressable
-                          style={[styles.button, styles.cancelButton]}
-                          onPress={() => setShowCancelInput(true)}
-                        >
-                          <Text style={styles.cancelText}>Cancelar</Text>
-                        </Pressable>
-                        <Pressable
-                          style={[styles.button, styles.approveButton]}
-                          onPress={handleApproveChange}
-                        >
-                          <Text style={styles.approveText}>Aprovar</Text>
-                        </Pressable>
-                      </>
-                    ) : (
+                    {showCancelInput && (
                       <Pressable
                         style={[styles.button, styles.cancelButton]}
                         onPress={() => handleCancelSolicitation(false)}
