@@ -207,9 +207,8 @@ export default function EditAppointmentModal({
       ...editedEvent,
       ID_PROFISSIO: selectedProfissional,
       DESCRCOMP: descComplementar,
-      DATAABERT: toMysqlString(startDate),
-      DATANOVA: null,
-      SOLICMASTER: 1,
+      DATANOVA: toMysqlString(startDate),
+      SOLICMASTER: 0,
     };
     onSave(updated);
   };

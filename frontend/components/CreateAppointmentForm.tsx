@@ -151,6 +151,17 @@ export default function CreateAppointmentForm({ onHandleSubmit }: Props) {
   };
 
   const handleSubmit = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // zera hora para comparar apenas data
+
+  if (startDate < today) {
+    Toast.show({
+      type: "error",
+      text1: "Data inválida",
+      text2: "A data do agendamento não pode ser anterior a hoje.",
+    });
+    return;
+  }
     if (
       !selectedEspecialidade ||
       !selectedProcedimento ||
@@ -171,7 +182,7 @@ export default function CreateAppointmentForm({ onHandleSubmit }: Props) {
       ID_PROFISSIO: selectedProfissional,
       DATAABERT: toMysqlString(startDate),
       DESCRCOMP: descricao,
-      SOLICMASTER: 1,
+      SOLICMASTER: 0,
     };
 
     api

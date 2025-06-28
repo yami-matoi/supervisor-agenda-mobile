@@ -122,7 +122,7 @@ const carregarEventos = async (id_espec?: number, id_profissio?: number | null) 
   };
 
   const handleSave = (updated: EditedEvent) => {
-    updated = { ...updated, SOLICMASTER: 1 };
+    updated = { ...updated, SOLICMASTER: 0 };
     api
       .put(`/agenda/${updated.IDAGENDA}`, updated)
       .then(() => {
@@ -149,7 +149,7 @@ const carregarEventos = async (id_espec?: number, id_profissio?: number | null) 
     api
       .put(`/agenda/${id}`, {
         SITUAGEN: 3,
-        SOLICMASTER: 1,
+        SOLICMASTER: 0,
         MOTIALT: cancelReason,
       })
       .then(() => {

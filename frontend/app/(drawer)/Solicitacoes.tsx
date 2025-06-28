@@ -108,7 +108,7 @@ export default function Solicitacoes() {
         onPress: () => {
           api
             .put(`/agenda/${selected.IDAGENDA}`, {
-              SOLICMASTER: 1,
+              SOLICMASTER: 0,
               SITUAGEN: 3,
               MOTIALT: cancelReason,
               DATAABERT: selected.DATANOVA

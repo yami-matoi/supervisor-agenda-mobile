@@ -60,7 +60,7 @@ export default function Sidebar() {
           />
         </View>
         <Text style={styles.name}>{usuario?.nome_profissio}</Text>
-                 <Text style={styles.name}>{usuario?.especialidade.descricao}</Text>
+                 <Text style={styles.name}>{usuario?.tipo === "3" && "Supervisor"} {usuario?.especialidade.descricao}</Text>
         <Text style={styles.cpf}>
           CPF: {formatarCPF(usuario?.cpf_profissio)}
         </Text>
