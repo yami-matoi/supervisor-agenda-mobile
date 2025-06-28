@@ -19,6 +19,8 @@ import { EditedEvent } from "@/components/EditAppointmentModal";
 import { TextInput } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { useFocusEffect } from '@react-navigation/native';
+import { storage } from "@/src/utils/storage"; // ajuste caminho conforme seu projeto
+
 
 export default function Solicitacoes() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -26,15 +28,27 @@ export default function Solicitacoes() {
   const [solicitacoes, setSolicitacoes] = useState<EditedEvent[]>([]);
   const [cancelReason, setCancelReason] = useState("");
   const [showCancelInput, setShowCancelInput] = useState(false);
+  const [idEspecialidadeUsuario, setIdEspecialidadeUsuario] = useState<number | null>(null);
 
-useFocusEffect(
-  React.useCallback(() => {
-    carregarSolicitacoes();
-  }, [])
-);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        try {
+          const usuarioSalvo = await storage.obterUsuario();
+          const id_espec = usuarioSalvo?.especialidade?.id;
+          setIdEspecialidadeUsuario(id_espec);
 
+          await carregarSolicitacoes(id_espec);
+        } catch (error) {
+          console.error("Erro ao carregar usuário:", error);
+        }
+      };
+
+      fetchData();
+    }, [])
+  );
  
-  const carregarSolicitacoes = async () => {
+ const carregarSolicitacoes = async (id_espec: number | null) => {
     try {
       const [agendaResponse, canceladosResponse] = await Promise.all([
         api.get("/agenda"),
@@ -49,8 +63,10 @@ useFocusEffect(
       const filtrados = dadosCombinados.filter(
         (item: any) =>
           item.SOLICMASTER === 0 &&
-          (item.DATANOVA !== null || item.SITUAGEN === "3")
+          (item.DATANOVA !== null || item.SITUAGEN === "3") &&
+          (id_espec === null || item.procedimento?.especialidades?.[0]?.IDESPEC === id_espec)
       );
+
       setSolicitacoes(filtrados);
     } catch (err) {
       console.error("Erro ao carregar eventos:", err);
