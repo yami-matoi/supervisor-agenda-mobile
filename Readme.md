@@ -1,4 +1,4 @@
-# 🗓️ Fasiclin - Sistema de Supervisionamento de agenda por especialidade
+# 🗓️ Fasiclin - Sistema de Agenda de Profissionais
 
 Sistema completo de agendamento de profissionais da saúde, desenvolvido como projeto acadêmico com **Node.js**, **React Native (Expo)** e **MySQL**.
 
@@ -114,11 +114,8 @@ agenda-mobile/
 - ✅ Filtros de profissionais por especialidade no cadastro e edição de agendamento
 - ✅ Associação a especialidade e procedimentos de forma dinâmica
 - ✅ Agendamentos com seleção de profissional e horário
-- ✅ Aba com listagem de alteração de agendamento e filtro por horário.
 - ✅ Interface mobile responsiva com navegação via `expo-router`
 - ✅ Compatível com APK de produção
-
-Todas essas funcionalidades levam em consideração a especialidade do supervisor logado no app, para seu funcionamento.
 
 ---
 
@@ -155,17 +152,9 @@ eas build --platform android
 
 ---
 
-## Grupo de agenda
-
-[**Gabriel Pereira Silva**](https://github.com/yami-matoi)
-[**Leonardo Lima Andrade**](https://github.com/LeonardoLAndrade)  
-[**Juliany Kamily**](https://github.com/kamilyjuliany)  
-
----
-
 ## 👨‍💻 Autor
 
 [**Gabriel Pereira Silva**](https://github.com/yami-matoi)  
 Projeto desenvolvido para fins acadêmicos  
 Faculdade FASIPE Cuiabá - FASICLIN
-
+#eumeformeiporcausadoleo
